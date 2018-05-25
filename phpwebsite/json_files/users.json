@@ -1,0 +1,32 @@
+{
+    "_id":1,
+    "first":"Chuck",
+    "last":"Norris",
+    "username":"chuckyboy",
+    "password":"9406619cfcda4721317ddce4367da895de0e4e87",
+    "email":"chuck.norris@chuck.com",
+    "last_login":"",
+    "avatar":""
+}
+
+{
+    "_id":2,
+    "first":"Joe",
+    "last":"Blow",
+    "username":"blowhard",
+    "password":"16a9a54ddf4259952e3c118c763138e83693d7fd",
+    "email":"joe.blow@gmail.com",
+    "last_login":"",
+    "avatar":""
+}
+
+{
+    "_id":3,
+    "first":"Sue",
+    "last":"Summers",
+    "username":"suzyq",
+    "password":"1eac7bdcbb6c569f15ecbf5cd873a2c477888e56",
+    "email":"suesummers@yahoo.com",
+    "last_login":"",
+    "avatar":""
+}

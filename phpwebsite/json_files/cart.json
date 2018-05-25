@@ -1,0 +1,23 @@
+{
+    "user_id": 3,
+    "cart": [
+        {
+            "id": 20,
+            "price": "$20.99",
+            "category": "individually-wrapped",
+            "title": "Mary Jane Candy"
+        },
+        {
+            "id": 6,
+            "price": "$15.99",
+            "category": "individually-wrapped",
+            "title": "Bulk Assorted Fruit Lollipops - 5lb"
+        },
+        {
+            "id": 34,
+            "price": "$32.99",
+            "category": "individually-wrapped",
+            "title": "Fun Size M&Ms Milk Chocolate - 5lb"
+        }
+    ]
+}
