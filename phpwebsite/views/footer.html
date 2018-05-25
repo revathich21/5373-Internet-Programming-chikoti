@@ -1,0 +1,75 @@
+<!-- Footer -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+    </div>
+    <!-- /.container -->
+</footer>
+chick
+<!-- Bootstrap core JavaScript -->
+<script>
+    $(document).ready(function () {
+       $('.catclass').click(function(){
+         console.log('pfpf');
+       });
+        $.get("navigation")
+            .done(function (data) {
+                //data = data.data;
+                //console.log(data);
+                $('#main-nav').html("");
+                var html = "";
+                /*for (var k in data) {
+                    if (data.hasOwnProperty(k)) {
+                        //console.log("Key is " + k + ", value is" + data[k].text);
+                        html += '<li class="nav-item"><a class="nav-link" href="#">' + data[k].text +
+                            '</a></li>\n';
+
+                    } 
+                }*/
+               // $('#main-nav').html(html);
+
+
+            });
+
+        /*
+        setCookie("candy_store",guid(),365);
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function guid() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+        } */
+      
+    });
+</script>
+</body>
+
+</html>

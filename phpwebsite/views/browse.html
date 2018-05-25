@@ -1,0 +1,535 @@
+<?php 
+session_start();
+if(isset($_SESSION['pay_success'] )){
+  $success = $_SESSION['pay_success'];
+  unset($_SESSION['pay_success']);
+}
+else{
+  $success = false;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Shop Homepage - Start Bootstrap Template</title>
+
+    <!-- Bootstrap core CSS
+    <link href="/chocolate/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/shop-homepage.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg"
+    crossorigin="anonymous">
+
+  <style>
+    body  {
+    background-image: url("https://c.stocksy.com/a/I3g700/z0/1829948.jpg");
+    background-size:cover;
+}
+    *.icon-blue {
+      color: #0088cc
+    }
+
+    *.icon-grey {
+      color: grey
+    }
+    .addcart {
+      cursor: pointer
+    }
+    #search_field{
+      cursor: pointer
+    }
+
+    i {
+      width: 75px;
+      text-align: center;
+      vertical-align: top;
+      position: relative;
+    }
+
+    .my-cart-icon {
+      color: rgb(172, 172, 172);
+      size: 9x;
+      vertical-align: center;
+      margin-top: 13px;
+      float: right;
+      cursor: pointer;
+    }
+
+    .badge {
+
+      padding-top: 0.15em;
+      padding-right: 0.3em;
+      padding-bottom: 0.15em;
+      padding-left: 0.3em;
+      font-weight: bold;
+      font-size: 90%;
+
+    }
+
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var val_obj = {
+      };
+       var success = '<?php echo $success;?>';
+      
+       if(!success){
+         
+        $('#payment-success').hide();
+       
+       }
+       else{
+         
+        $('#payment-success').text('Successfully charged $'+success+'!');
+       $('#payment-success').show();
+       $('#payment-success').fadeOut(15000);
+       }
+      loadCategoryMenu();
+
+
+function loadCategoryMenu() {
+
+    offset = (typeof offset !== 'undefined') ? offset : 0;
+    size = (typeof size !== 'undefined') ? size : 10;
+
+    var route = "categories";
+
+    $.get(route)
+        .done(function (data) {
+            var obj = JSON.parse(data);
+            var length = obj['data'][0].length;
+
+            var k='';
+            for(var i=0;i<length;i++){
+               var category =  obj['data'][0][i].category;
+              //// k+='<a href="#'+category+'" '+'class="list-group-item catclass">'+obj['data'][i].category+'</a>';
+               k+='<option value="'+category+'">'+category+'</option>';
+               
+           }
+            $('.category_lists').append(k);
+            var p='';
+            for(var i=1;i<11;i++){
+              p+='<li style="border:1px solid green;"><a class="page" href="#'+i+'">'+i+'</a></li>&nbsp;&nbsp;';
+            }
+            $('.pagination').html(p);
+            
+
+
+        });
+        
+}
+$('.pagination').click(function(event){
+  var page = $(event.target).text();
+  var category = $('.category_lists').val();
+  var route = "browse/category/"+ category+"/page/"+page;
+  $.get(route)
+        .done(function (data) {
+            var obj = JSON.parse(data);
+            var length = obj['data'].length;
+            $('#candy-content').html('');
+            for(var i=0;i<length;i++){
+              $('#candy-content').append(build_product_card(obj['data'][i]));
+            }
+        });
+
+});
+  grabProducts($('#candy-content'),'all'); 
+
+
+function grabProducts($dom_ele,category) {
+  
+    $dom_ele.html("");
+    category = (typeof category !== 'undefined') ? category : 'all';
+
+    var route = "browse/category/" + category;
+
+    $.get(route)
+        .done(function (data) {
+            var obj = JSON.parse(data);
+            var length = obj['data'].length;
+            for(var i=0;i<length;i++){
+                $dom_ele.append(build_product_card(obj['data'][i]));
+            }
+        });
+}
+
+function build_product_card(data) {
+    var img = '/small_images/'+data.image_path+'_small'+'.'+data.img_type;
+    var short = data.description.substr(0,100)+"...";
+    var html = '';
+    html += '<div class="col-lg-4 col-md-6 mb-4">';
+    html += ' <div class="card h-100">';
+    html += '  <a href="#"><img class="card-img-top" src="'+img+'" alt=""></a>';
+    html += '   <div class="card-body">';
+    html += '    <h4 class="card-title">';
+    html += '      <a href="#">'+data.name+'</a>';
+    html += '    <span><i class="fas fa-shopping-cart addcart my-cart-btn" data-pid="'+data.id+'" style="font-size:14px"></i></span>';
+    html += '    </h4>';
+    html += '    <h5>$'+data.price+'</h5>';
+    html += '    <p class="card-text">'+short+'</p>';
+    html += '   </div>';
+    html += ' </div>';
+    html += '</div>';
+    return html;
+}
+        $.get("navigation")
+            .done(function (data) {
+                $('#main-nav').html("");
+                var html = "";
+
+            });
+            $('.category_lists').change(function(event) {
+              var text = $('.category_lists').val();
+              grabProducts($('#candy-content'),text); //attach_cart_events
+              //window.location = 'http://159.89.230.116/chocolate/app.php/browsePage#'+text;
+            });
+             $('#candy-content').click(function(event) {
+              if($(event.target).hasClass('addcart')){
+                
+              var pid = $(event.target).attr("data-pid");
+              $.get('addtoCart/pid/'+pid)
+                .done(function (data) {
+            
+             });
+             $('.load-events').html('');
+             addtoCart();
+              }
+             });
+             
+             addtoCart();
+             function addtoCart(){
+               
+             $.get('getCart')
+                .done(function (data) {
+                  var obj = JSON.parse(data);
+                  var length = obj['data'][0].length;
+                  var total =0.00;
+                  
+                  
+                 for(var i=0;i<length;i++){
+                   val_obj[obj['data'][1][i].id] = obj['data'][1][i].price*obj['data'][0][i]
+                  total+=obj['data'][1][i].price*obj['data'][0][i];
+                  var img = '<img src="/small_images/'+obj['data'][1][i].image_path+'_small.'
+                  +obj['data'][1][i].img_type+'" height="50">';
+                  var del_icon = '<a href="#" data-id="'+obj['data'][1][i].id+'" class="delete-item"> \
+                  <i class="fas fa-trash-alt" style="color:red;text-align:center"></i></a>';
+                 $('.load-events').append('<tr class="mycart-items"><td>'+img+
+                '</td><td>'+obj['data'][1][i].name+'</td><td>'+obj['data'][0][i]+
+                   '</td><td>'+obj['data'][1][i].price*obj['data'][0][i]+'</td><td>'+del_icon+'</td></tr>');
+                  
+                     
+                }
+                if(length>0){
+                    $('.load-events').append('<tr class="total"><td></td><td></td><td></td><td</td><td>Total</td><td class="total-value"></td></tr>');
+                     
+                }
+                if(length<1){
+                  $('.load-events').html('');
+                }
+                $('#stripe-price').val(total.toFixed(2));
+                $('.total-value').text(total.toFixed(2));
+                $('#cart-badge').text(length);
+              });
+
+             }
+             $('.load-events').click(function(event) {
+              var pid = $(event.target).closest('a').attr('data-id');
+              var p_value = parseFloat($('.total-value').text())
+              //$('.total-value').text(100.00-parseFloat(val_obj[pid]));
+            $.get('deleteCart/pid/'+pid)
+                .done(function (data) {
+                 var obj = JSON.parse(data);
+                  if(obj['data']===true){
+                    $(event.target).closest('tr').remove();
+                    var num = parseInt($('#cart-badge').text())-1;
+                    $('#cart-badge').text(num);
+                    //var prevPrice = parseFloat($('#stripe-price').val());
+                    $('#stripe-price').val((p_value-parseFloat(val_obj[pid])).toFixed(2));
+                    $('.total-value').text((p_value-parseFloat(val_obj[pid])).toFixed(2));
+                    var k = $('.load-events tr').hasClass('mycart-items');//.length();
+                    if(!k){
+                      $('#stripe-checkout').hide();
+                      $('.load-events').hide();
+                     }
+                      else{
+                         $('#stripe-checkout').show();
+                         $('.load-events').show();
+                      }
+                  }
+
+           
+                 
+                });
+             });
+             $('#search_field').click(function(){
+                  var search_text = $('#search-text').val();
+             $.get('search/name/'+search_text)
+                .done(function (data) {
+                  var obj = JSON.parse(data);
+                  var length = obj['data'].length;
+                  $('#candy-content').html('');
+                  if(length<1){
+                    $('#candy-content').append('<h3 style="text-align:center;color:green">No Search Results</h3>')
+                  }
+                  else{
+                    
+                  for(var i=0;i<length;i++){
+                    $('#candy-content').append(build_product_card(obj['data'][i]));
+                  }
+                  }
+             })
+            });
+            $('.stripe-button-el').text('Checkout');
+            $("#view-cart").click(function(){
+                var k = $('.load-events tr').hasClass('mycart-items');//.length();
+                if(!k){
+                  $('#stripe-checkout').hide();
+                }
+                else{
+                  
+                $('#stripe-checkout').show();
+                $('.load-events').show();
+                }
+            });
+
+    });
+</script>
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#"> </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <h2 style='color:yellow'>Candy Cravers</h2>
+          &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+                 
+                <input class="form-horizontal"  type="text" id="search-text" placeholder="search for candy.." style="background-color:aliceblue; color:black;">
+                &nbsp;&nbsp;<button id="search_field"  class="form-horizontal" style="border-radius:0px;color:green">Search</button>
+             
+               
+
+          <ul class="navbar-nav ml-auto">
+              
+           
+                  
+            <li class="nav-item active">
+              <a class="nav-link" style='color:yellow' href="#">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <?php 
+               if(isset($_SESSION['username'])){
+                 echo "<a class='nav-link' style='color:yellow' href='/logout.php'>Logout</a>";
+               }
+               else{
+                echo "<a class='nav-link' style='color:yellow' href='/register.php'>Register</a>";
+               }
+              
+              ?>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" style='color:yellow' href="/views/about.html">About</a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link" style='color:yellow' href="/views/contact.html">Contact</a>
+            </li>
+      <li class="nav-item">
+          <a href="#cartModal" data-toggle="modal">
+              <i class="fas fa-shopping-cart my-cart-icon"  id="view-cart">
+                <span id="cart-badge" class="badge badge-pill badge-danger"></span></i></a>
+              </li>
+   
+            
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+        <strong id="payment-success" class="alert alert-success"></strong>
+     
+<!-- Page Content -->
+<div class="container">
+
+    <div class="row">
+      <div class="col-lg-3">
+         
+        
+        <div class="list-group" id="candy-categories">
+          <h2><label style='color:green'>Category</label></h2>
+          <select class="form-control category_lists"> 
+            <option value="all" style='color:green'>All Categories</option>
+          </select>
+        </div>  <br>
+        <ul class="pagination" style="list-style-type: none">
+         
+        </ul>
+        
+  
+      </div>
+    
+      <!-- /.col-lg-3 -->
+  
+      <div class="col-lg-9">
+        
+        <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner" role="listbox">
+            
+            <div class="carousel-item active">
+              <img class="d-block img-fluid" src="/new_folder/IMG_1185-3-1100x485.jpg" alt="First slide">
+            </div>
+            <div class="carousel-item">
+                <img class="d-block img-fluid" src="https://media.istockphoto.com/photos/colorful-candy-background-picture-id471199003" alt="Second slide">
+              </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="http://www.nutritionaloutlook.com/sites/default/files/gummies%20iStock_000026227136Large.jpg" alt="Third slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="https://previews.123rf.com/images/natazhekova/natazhekova1703/natazhekova170300239/74793376-small-girl-eating-lollipop-happy-children-with-a-big-delicious-candy-portrait-of-little-baby-girl-ag.jpg" alt="Fourth slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="https://st2.depositphotos.com/2631505/8686/i/950/depositphotos_86865700-stock-photo-child-eating-candy-like-crazy.jpg" alt="Fifth slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="http://www.glutenfreeguy.com/images/s1600/IMG_6669.JPG" alt="sixth slide">
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+        
+       
+        <div class="row" id="candy-content">
+          
+     
+          
+  
+        </div>
+        <!-- /.row -->
+  
+      </div>
+      <!-- /.col-lg-9 -->
+  
+    </div>
+    <!-- /.row -->
+  
+  </div>
+  <!-- /.container -->
+  <div class="container">
+    <div class="row">
+      <div class='modal fade' id='cartModal'>
+        <div class='modal-dialog'>
+          <div class='modal-content'>
+            <div class='modal-header'>
+              <h4 class='modal-title' >
+                <strong>Cart</strong>
+              </h4>
+              <button id="closeCart" type="button" class="close" data-dismiss="modal" aria-hidden="true">Close X</button>
+  
+            </div>
+            <!-- / modal-header -->
+            <div class='modal-body'>
+  
+              <table class="table table-striped custab" id="cartTable">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Item</th>
+                    <th>Count</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody class="load-events">
+               
+                   <tr class="total">
+                     <td></td>
+                     <td></td>
+                     <td></td>
+                     <td>Total:</td>
+                    <td class="total-value"></td>
+                   </tr>
+                
+                  </tbody>
+              </table>
+  
+            </div>
+            <!-- / modal-body -->
+            <div class='modal-footer'>
+              <div id="stripe-checkout" class="checkbox pull-right">
+                  <?php require_once('./config.php'); ?>
+
+                  <form action="/charge.php" method="post">
+                    <input type="hidden" id="stripe-price" name="item_price">
+                    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="<?php echo $stripe['publishable_key']; ?>"
+                            data-description="Access for a year"
+                            data-amount=""
+                            data-locale="auto"></script>
+                  </form>
+                <!-- <label>
+                  <input class='modal-check' name='modal-check' type="checkbox"> Don't Show
+                </label> -->
+              </div>
+              <!--/ checkbox -->
+            </div>
+            <!--/ modal-footer -->
+          </div>
+          <!-- / modal-content -->
+        </div>
+        <!--/ modal-dialog -->
+      </div>
+      <!-- / modal -->
+    </div>
+    <!-- / row -->
+  </div>
+  <!-- / container -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2018 </p>
+    </div>
+    <!-- /.container -->
+</footer>
+<!--
+<script src="./js/jquery.min.js?v=478398109"></script>
+<script src="./js/bootstrap.bundle.min.js?v=1260029302"></script>
+<script src="./scripts/cookie.js?v=894582135"></script>
+<script src="./scripts/categories.js?v=932542849"></script>
+<script src="./scripts/fetch_products.js?v=655064995"></script>
+-->
+
+</body>
+</html>
